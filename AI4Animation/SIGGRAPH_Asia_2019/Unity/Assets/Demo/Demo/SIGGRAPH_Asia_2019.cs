@@ -331,17 +331,20 @@ public class SIGGRAPH_Asia_2019 : NeuralAnimation {
 	}
 
 	private void Default() {
-		if(Controller.ProjectionActive) {
-			ApplyStaticGoal(Controller.Projection.point, Vector3.ProjectOnPlane(Controller.Projection.point-transform.position, Vector3.up).normalized, Signals);
-			/*
-			Vector3 direction = (Controller.Projection.point - transform.position).GetRelativeDirectionTo(transform.GetWorldMatrix()).normalized;
-			ApplyDynamicGoal(
-				transform.GetWorldMatrix(),
-				direction,
-				Vector3.SignedAngle(transform.forward, Controller.Projection.point, Vector3.up) / 2f,
-				Signals
-			);
-			*/
+		if(true) {
+		// if(Controller.ProjectionActive) {
+		// ApplyStaticGoal(Controller.Projection.point, Vector3.ProjectOnPlane(Controller.Projection.point-transform.position, Vector3.up).normalized, Signals);
+		var targetPosition = FakeInput.Instance.transform.position;
+		ApplyStaticGoal(targetPosition, Vector3.ProjectOnPlane(targetPosition-transform.position, Vector3.up).normalized, Signals);
+		/*
+		Vector3 direction = (Controller.Projection.point - transform.position).GetRelativeDirectionTo(transform.GetWorldMatrix()).normalized;
+		ApplyDynamicGoal(
+			transform.GetWorldMatrix(),
+			direction,
+			Vector3.SignedAngle(transform.forward, Controller.Projection.point, Vector3.up) / 2f,
+			Signals
+		);
+		*/
 		} else {
 			ApplyDynamicGoal(
 				RootSeries.Transformations[TimeSeries.Pivot],
