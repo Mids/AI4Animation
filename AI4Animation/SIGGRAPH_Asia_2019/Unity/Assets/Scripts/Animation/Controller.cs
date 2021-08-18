@@ -201,7 +201,12 @@ public class Controller {
 		return Input.anyKey;
 	}
 
-	public bool QueryKey(KeyCode k) {
+	public bool QueryKey(KeyCode k)
+	{
+		// Hi-Jack Key Input
+		if (FakeInput.IsFakeKey(k))
+			return FakeInput.ControlFakeKey(k);
+		
 		return Input.GetKey(k);
 	}
 

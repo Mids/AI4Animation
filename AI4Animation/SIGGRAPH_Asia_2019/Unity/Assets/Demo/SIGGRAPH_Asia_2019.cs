@@ -141,6 +141,7 @@ public class SIGGRAPH_Asia_2019 : NeuralAnimation {
 		Signals = Controller.PoolSignals();
 		UserControl = Controller.PoolUserControl(Signals);
 		NetworkControl = Controller.PoolNetworkControl(Signals);
+		// print($"UserControl : {UserControl}, NetworkControl : {NetworkControl}");
 
 		if(IsInteracting) {
 			//Do nothing because coroutines have control.
@@ -331,17 +332,20 @@ public class SIGGRAPH_Asia_2019 : NeuralAnimation {
 	}
 
 	private void Default() {
-		if(Controller.ProjectionActive) {
-			ApplyStaticGoal(Controller.Projection.point, Vector3.ProjectOnPlane(Controller.Projection.point-transform.position, Vector3.up).normalized, Signals);
-			/*
-			Vector3 direction = (Controller.Projection.point - transform.position).GetRelativeDirectionTo(transform.GetWorldMatrix()).normalized;
-			ApplyDynamicGoal(
-				transform.GetWorldMatrix(),
-				direction,
-				Vector3.SignedAngle(transform.forward, Controller.Projection.point, Vector3.up) / 2f,
-				Signals
-			);
-			*/
+		if(true) {
+		// if(Controller.ProjectionActive) {
+		// ApplyStaticGoal(Controller.Projection.point, Vector3.ProjectOnPlane(Controller.Projection.point-transform.position, Vector3.up).normalized, Signals);
+		var targetPosition = FakeInput.Instance.transform.position;
+		ApplyStaticGoal(targetPosition, Vector3.ProjectOnPlane(targetPosition-transform.position, Vector3.up).normalized, Signals);
+		/*
+		Vector3 direction = (Controller.Projection.point - transform.position).GetRelativeDirectionTo(transform.GetWorldMatrix()).normalized;
+		ApplyDynamicGoal(
+			transform.GetWorldMatrix(),
+			direction,
+			Vector3.SignedAngle(transform.forward, Controller.Projection.point, Vector3.up) / 2f,
+			Signals
+		);
+		*/
 		} else {
 			ApplyDynamicGoal(
 				RootSeries.Transformations[TimeSeries.Pivot],
@@ -563,24 +567,24 @@ public class SIGGRAPH_Asia_2019 : NeuralAnimation {
 	}
 
     protected override void Postprocess() {
-		Matrix4x4 rightFoot = Actor.GetBoneTransformation(ContactSeries.Bones[3]);
-		Matrix4x4 leftFoot = Actor.GetBoneTransformation(ContactSeries.Bones[4]);
-		RightFootIK.Objectives[0].SetTarget(rightFoot.GetPosition(), 1f-ContactSeries.Values[TimeSeries.Pivot][3]);
-		RightFootIK.Objectives[0].SetTarget(rightFoot.GetRotation());
-		LeftFootIK.Objectives[0].SetTarget(leftFoot.GetPosition(), 1f-ContactSeries.Values[TimeSeries.Pivot][4]);
-		LeftFootIK.Objectives[0].SetTarget(leftFoot.GetRotation());
-		RightFootIK.Solve();
-		LeftFootIK.Solve();
-
-		Transform rightToe = Actor.FindBone("RightToe").Transform;
-		Vector3 rightPos = rightToe.transform.position;
-		rightPos.y = Mathf.Max(rightPos.y, 0.02f);
-		rightToe.position = rightPos;
-
-		Transform leftToe = Actor.FindBone("LeftToe").Transform;
-		Vector3 leftPos = leftToe.transform.position;
-		leftPos.y = Mathf.Max(leftPos.y, 0.02f);
-		leftToe.position = leftPos;
+		// Matrix4x4 rightFoot = Actor.GetBoneTransformation(ContactSeries.Bones[3]);
+		// Matrix4x4 leftFoot = Actor.GetBoneTransformation(ContactSeries.Bones[4]);
+		// RightFootIK.Objectives[0].SetTarget(rightFoot.GetPosition(), 1f-ContactSeries.Values[TimeSeries.Pivot][3]);
+		// RightFootIK.Objectives[0].SetTarget(rightFoot.GetRotation());
+		// LeftFootIK.Objectives[0].SetTarget(leftFoot.GetPosition(), 1f-ContactSeries.Values[TimeSeries.Pivot][4]);
+		// LeftFootIK.Objectives[0].SetTarget(leftFoot.GetRotation());
+		// RightFootIK.Solve();
+		// LeftFootIK.Solve();
+		//
+		// Transform rightToe = Actor.FindBone("RightToe").Transform;
+		// Vector3 rightPos = rightToe.transform.position;
+		// rightPos.y = Mathf.Max(rightPos.y, 0.02f);
+		// rightToe.position = rightPos;
+		//
+		// Transform leftToe = Actor.FindBone("LeftToe").Transform;
+		// Vector3 leftPos = leftToe.transform.position;
+		// leftPos.y = Mathf.Max(leftPos.y, 0.02f);
+		// leftToe.position = leftPos;
     }
 
 	protected override void OnGUIDerived() {

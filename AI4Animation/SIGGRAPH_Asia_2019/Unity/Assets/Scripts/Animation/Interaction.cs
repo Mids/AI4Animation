@@ -33,7 +33,7 @@ public class Interaction : MonoBehaviour {
 		if(Application.isPlaying) {
 			BoxCollider trigger = gameObject.AddComponent<BoxCollider>();
 			trigger.isTrigger = true;
-			trigger.size = 2f*Geometry.GetExtents();
+			trigger.size = 2f*GetGeometry().GetExtents();
 			trigger.center = Geometry.GetCenter();
 		}
 	}
