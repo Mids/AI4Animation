@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FakeInput : MonoBehaviour
 {
-    private static readonly KeyCode[] FakeKeys = {KeyCode.W, KeyCode.Q, KeyCode.E, KeyCode.LeftShift};
+    private static readonly KeyCode[] FakeKeys = { };//KeyCode.W, KeyCode.Q, KeyCode.E, KeyCode.LeftShift};
     // private static readonly KeyCode[] FakeKeys = {};
 
     private static readonly Vector3[] CheckPoints =
