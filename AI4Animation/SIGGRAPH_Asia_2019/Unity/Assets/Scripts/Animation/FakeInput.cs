@@ -1,10 +1,11 @@
 ﻿using System.Collections;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
 public class FakeInput : MonoBehaviour
 {
-    private static readonly KeyCode[] FakeKeys = { };//KeyCode.W, KeyCode.Q, KeyCode.E, KeyCode.LeftShift};
+    private static readonly KeyCode[] FakeKeys = {KeyCode.W, KeyCode.Q, KeyCode.E, KeyCode.LeftShift};
     // private static readonly KeyCode[] FakeKeys = {};
 
     private static readonly Vector3[] CheckPoints =
@@ -19,7 +20,7 @@ public class FakeInput : MonoBehaviour
 
     public static float AngleThreshold = 10f;
 
-    public static float DistanceThreshold = 1f;
+    public static float DistanceThreshold = 0.5f;
 
     private static bool isChanging = false;
 
@@ -27,18 +28,92 @@ public class FakeInput : MonoBehaviour
 
     private Material Mat;
 
+    public float cumulativeTime = 0f;
+
+    public Transform leftFoot;
+    public Transform rightFoot;
+
+    public bool isCheckingStopToRun = false;
+    public bool isCheckingRunToStop = false;
+
+    public Vector3 lastCharPos;
+
+    public int StopToRunCount = 0;
+
     private void Start()
     {
         Instance = this;
         CharacterTransform = GameObject.Find("Anubis").transform;
         Mat = GetComponent<MeshRenderer>().material;
-        transform.position = GetRandomCheckPoint();
+        // transform.position = GetRandomCheckPoint();
     }
 
     private void Update()
     {
-        if (Vector3.Distance(CharacterTransform.position, transform.position) < DistanceThreshold && !isChanging)
-            StartCoroutine(DelayedChange());
+        // if (Vector3.Distance(CharacterTransform.position, transform.position) < DistanceThreshold && !isChanging)
+        //     StartCoroutine(DelayedChange());
+
+        cumulativeTime += Time.deltaTime;
+        var curPos = Instance.CharacterTransform.position;
+
+        switch ((int) (cumulativeTime / 8f) % 2)
+        {
+            case 0:
+                transform.position = curPos;
+                if (isCheckingStopToRun)
+                {
+                    isCheckingStopToRun = false;
+                    isCheckingRunToStop = true;
+                }
+
+                break;
+            case 1:
+                transform.position = curPos + Vector3.forward * 10;
+                
+                string title;
+                
+                if (!isCheckingStopToRun)
+                {
+                    isCheckingStopToRun = true;
+                    isCheckingRunToStop = false;
+                    ++StopToRunCount;
+                    title = $"StopToRun_{StopToRunCount}";
+                    new StreamWriter(title + ".txt").Close();
+                }
+
+                
+                title = $"StopToRun_{StopToRunCount}";
+                var sw = new StreamWriter(title + ".txt", true);
+                if (isCheckingStopToRun)
+                {
+                    var dis = curPos.z - lastCharPos.z;
+                    print(dis / Time.deltaTime);
+
+                    sw.Write(dis + "\t\t");
+                }
+        
+                sw.Close();
+
+                break;
+        }
+
+        lastCharPos = curPos;
+    }
+
+    public IEnumerator WriteStopToRun(string title)
+    {
+        var sw = new StreamWriter(title + ".txt");
+        while (isCheckingStopToRun)
+        {
+            var dis = CharacterTransform.position.z - lastCharPos.z;
+            print(dis);
+
+            sw.WriteAsync(dis + "\t");
+
+            yield return null;
+        }
+        
+        sw.Close();
     }
 
     private Vector3 GetRandomCheckPoint()
@@ -84,7 +159,8 @@ public class FakeInput : MonoBehaviour
 
     public static bool ControlFakeKey(KeyCode key)
     {
-        if (isChanging) return false;
+        if (Vector3.Distance(Instance.CharacterTransform.position, Instance.transform.position) <
+            DistanceThreshold) return false;
 
         switch (key)
         {

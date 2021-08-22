@@ -78,7 +78,7 @@ public class SIGGRAPH_Asia_2019 : NeuralAnimation {
 
 		Controller.Signal run = Controller.AddSignal("Run");
 		run.AddKey(KeyCode.LeftShift, true);
-		run.Velocity = 3f;
+		run.Velocity = 6f;
 		run.UserControl = 0.25f;
 		run.NetworkControl = 0.25f;
 
@@ -332,8 +332,8 @@ public class SIGGRAPH_Asia_2019 : NeuralAnimation {
 	}
 
 	private void Default() {
-		if(true) {
-		// if(Controller.ProjectionActive) {
+		// if(true) {
+		if(Controller.ProjectionActive) {
 		// ApplyStaticGoal(Controller.Projection.point, Vector3.ProjectOnPlane(Controller.Projection.point-transform.position, Vector3.up).normalized, Signals);
 		var targetPosition = FakeInput.Instance.transform.position;
 		ApplyStaticGoal(targetPosition, Vector3.ProjectOnPlane(targetPosition-transform.position, Vector3.up).normalized, Signals);
