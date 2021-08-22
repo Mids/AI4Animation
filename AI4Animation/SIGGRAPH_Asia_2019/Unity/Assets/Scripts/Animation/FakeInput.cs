@@ -55,23 +55,40 @@ public class FakeInput : MonoBehaviour
 
         cumulativeTime += Time.deltaTime;
         var curPos = Instance.CharacterTransform.position;
+        string title;
+        StreamWriter sw;
 
         switch ((int) (cumulativeTime / 8f) % 2)
         {
             case 0:
                 transform.position = curPos;
+
                 if (isCheckingStopToRun)
                 {
                     isCheckingStopToRun = false;
                     isCheckingRunToStop = true;
+                    title = $"RunToStop_{StopToRunCount}";
+                    new StreamWriter(title + ".txt").Close();
+                    StartCoroutine(FootSlidingMeasure.Measure(leftFoot, "lfs_" + title));
+                    StartCoroutine(FootSlidingMeasure.Measure(rightFoot, "rfs_" + title));
                 }
+
+                if (isCheckingRunToStop)
+                {
+                    title = $"RunToStop_{StopToRunCount}";
+                    sw = new StreamWriter(title + ".txt", true);
+                    var dis = (curPos - lastCharPos).magnitude;
+
+                    sw.Write(dis + "\t\t");
+                    sw.Close();
+                }
+
 
                 break;
             case 1:
                 transform.position = curPos + Vector3.forward * 10;
-                
-                string title;
-                
+
+
                 if (!isCheckingStopToRun)
                 {
                     isCheckingStopToRun = true;
@@ -79,41 +96,26 @@ public class FakeInput : MonoBehaviour
                     ++StopToRunCount;
                     title = $"StopToRun_{StopToRunCount}";
                     new StreamWriter(title + ".txt").Close();
+                    StartCoroutine(FootSlidingMeasure.Measure(leftFoot, "lfs_" + title));
+                    StartCoroutine(FootSlidingMeasure.Measure(rightFoot, "rfs_" + title));
                 }
 
-                
-                title = $"StopToRun_{StopToRunCount}";
-                var sw = new StreamWriter(title + ".txt", true);
+
                 if (isCheckingStopToRun)
                 {
+                    title = $"StopToRun_{StopToRunCount}";
+                    sw = new StreamWriter(title + ".txt", true);
                     var dis = curPos.z - lastCharPos.z;
-                    print(dis / Time.deltaTime);
 
                     sw.Write(dis + "\t\t");
+                    sw.Close();
                 }
-        
-                sw.Close();
+
 
                 break;
         }
 
         lastCharPos = curPos;
-    }
-
-    public IEnumerator WriteStopToRun(string title)
-    {
-        var sw = new StreamWriter(title + ".txt");
-        while (isCheckingStopToRun)
-        {
-            var dis = CharacterTransform.position.z - lastCharPos.z;
-            print(dis);
-
-            sw.WriteAsync(dis + "\t");
-
-            yield return null;
-        }
-        
-        sw.Close();
     }
 
     private Vector3 GetRandomCheckPoint()
