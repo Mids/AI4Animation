@@ -58,128 +58,9 @@ public class FakeInput : MonoBehaviour
         string title;
         StreamWriter sw;
 
-        switch ((int) (cumulativeTime / 8f) % 8)
+        switch ((int) (cumulativeTime / 8f) % 2)
         {
             case 0:
-                transform.position = curPos;
-
-                if (isCheckingStopToRun)
-                {
-                    isCheckingStopToRun = false;
-                    isCheckingRunToStop = true;
-                }
-                
-                break;
-            case 1:
-                transform.position = curPos + Vector3.left * 10;
-
-
-                if (!isCheckingStopToRun)
-                {
-                    isCheckingStopToRun = true;
-                    isCheckingRunToStop = false;
-                    ++StopToRunCount;
-                    title = $"StopToRun_{StopToRunCount}";
-                    new StreamWriter(title + ".txt").Close();
-                    StartCoroutine(FootSlidingMeasure.Measure(leftFoot, "lfs_" + title));
-                    StartCoroutine(FootSlidingMeasure.Measure(rightFoot, "rfs_" + title));
-                }
-
-
-                if (isCheckingStopToRun)
-                {
-                    title = $"StopToRun_{StopToRunCount}";
-                    sw = new StreamWriter(title + ".txt", true);
-                    var dis = curPos.x - lastCharPos.x;
-
-                    sw.Write(-dis + "\t\t");
-                    sw.Close();
-                }
-
-                break;
-            case 2:
-                transform.position = curPos;
-
-                if (isCheckingStopToRun)
-                {
-                    isCheckingStopToRun = false;
-                    isCheckingRunToStop = true;
-                }
-                break;
-            case 3:
-                transform.position = curPos + Vector3.back * 10;
-
-                if (!isCheckingStopToRun)
-                {
-                    isCheckingStopToRun = true;
-                    isCheckingRunToStop = false;
-                    ++StopToRunCount;
-                    title = $"StopToRun_{StopToRunCount}";
-                    new StreamWriter(title + ".txt").Close();
-                    StartCoroutine(FootSlidingMeasure.Measure(leftFoot, "lfs_" + title));
-                    StartCoroutine(FootSlidingMeasure.Measure(rightFoot, "rfs_" + title));
-                }
-
-
-                if (isCheckingStopToRun)
-                {
-                    title = $"StopToRun_{StopToRunCount}";
-                    sw = new StreamWriter(title + ".txt", true);
-                    var dis = curPos.z - lastCharPos.z;
-
-                    sw.Write(-dis + "\t\t");
-                    sw.Close();
-                }
-
-                break;
-            case 4:
-                transform.position = curPos;
-
-                if (isCheckingStopToRun)
-                {
-                    isCheckingStopToRun = false;
-                    isCheckingRunToStop = true;
-                }
-                
-                break;
-            case 5:
-                transform.position = curPos + Vector3.right * 10;
-
-
-                if (!isCheckingStopToRun)
-                {
-                    isCheckingStopToRun = true;
-                    isCheckingRunToStop = false;
-                    ++StopToRunCount;
-                    title = $"StopToRun_{StopToRunCount}";
-                    new StreamWriter(title + ".txt").Close();
-                    StartCoroutine(FootSlidingMeasure.Measure(leftFoot, "lfs_" + title));
-                    StartCoroutine(FootSlidingMeasure.Measure(rightFoot, "rfs_" + title));
-                }
-
-
-                if (isCheckingStopToRun)
-                {
-                    title = $"StopToRun_{StopToRunCount}";
-                    sw = new StreamWriter(title + ".txt", true);
-                    var dis = curPos.x - lastCharPos.x;
-
-                    sw.Write(dis + "\t\t");
-                    sw.Close();
-                }
-
-                break;
-            case 6:
-                transform.position = curPos;
-
-                if (isCheckingStopToRun)
-                {
-                    isCheckingStopToRun = false;
-                    isCheckingRunToStop = true;
-                }
-                
-                break;
-            case 7:
                 transform.position = curPos + Vector3.forward * 10;
 
 
@@ -202,6 +83,32 @@ public class FakeInput : MonoBehaviour
                     var dis = curPos.z - lastCharPos.z;
 
                     sw.Write(dis + "\t\t");
+                    sw.Close();
+                }
+
+                break;
+            case 1:
+                transform.position = curPos + Vector3.back * 10;
+
+
+                if (!isCheckingRunToStop)
+                {
+                    isCheckingStopToRun = false;
+                    isCheckingRunToStop = true;
+                    ++StopToRunCount;
+                    title = $"StopToRun_{StopToRunCount}";
+                    new StreamWriter(title + ".txt").Close();
+                    StartCoroutine(FootSlidingMeasure.Measure(leftFoot, "lfs_" + title));
+                    StartCoroutine(FootSlidingMeasure.Measure(rightFoot, "rfs_" + title));
+                }
+
+                if (isCheckingRunToStop)
+                {
+                    title = $"StopToRun_{StopToRunCount}";
+                    sw = new StreamWriter(title + ".txt", true);
+                    var dis = curPos.z - lastCharPos.z;
+
+                    sw.Write(-dis + "\t\t");
                     sw.Close();
                 }
 
