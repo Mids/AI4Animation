@@ -58,10 +58,20 @@ public class FakeInput : MonoBehaviour
         string title;
         StreamWriter sw;
 
-        switch ((int) (cumulativeTime / 8f) % 2)
+        switch ((int) (cumulativeTime / 8f) % 4)
         {
             case 0:
-                transform.position = curPos + Vector3.forward * 10;
+                transform.position = curPos;
+
+                if (isCheckingStopToRun)
+                {
+                    isCheckingStopToRun = false;
+                    isCheckingRunToStop = true;
+                }
+                
+                break;
+            case 1:
+                transform.position = curPos + Vector3.back * 10;
 
 
                 if (!isCheckingStopToRun)
@@ -82,19 +92,27 @@ public class FakeInput : MonoBehaviour
                     sw = new StreamWriter(title + ".txt", true);
                     var dis = curPos.z - lastCharPos.z;
 
-                    sw.Write(dis + "\t\t");
+                    sw.Write(-dis + "\t\t");
                     sw.Close();
                 }
 
                 break;
-            case 1:
-                transform.position = curPos + Vector3.back * 10;
+            case 2:
+                transform.position = curPos;
 
-
-                if (!isCheckingRunToStop)
+                if (isCheckingStopToRun)
                 {
                     isCheckingStopToRun = false;
                     isCheckingRunToStop = true;
+                }
+                break;
+            case 3:
+                transform.position = curPos + Vector3.forward * 10;
+
+                if (!isCheckingStopToRun)
+                {
+                    isCheckingStopToRun = true;
+                    isCheckingRunToStop = false;
                     ++StopToRunCount;
                     title = $"StopToRun_{StopToRunCount}";
                     new StreamWriter(title + ".txt").Close();
@@ -102,13 +120,14 @@ public class FakeInput : MonoBehaviour
                     StartCoroutine(FootSlidingMeasure.Measure(rightFoot, "rfs_" + title));
                 }
 
-                if (isCheckingRunToStop)
+
+                if (isCheckingStopToRun)
                 {
                     title = $"StopToRun_{StopToRunCount}";
                     sw = new StreamWriter(title + ".txt", true);
                     var dis = curPos.z - lastCharPos.z;
 
-                    sw.Write(-dis + "\t\t");
+                    sw.Write(dis + "\t\t");
                     sw.Close();
                 }
 
