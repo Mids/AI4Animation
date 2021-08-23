@@ -86,7 +86,7 @@ public class FakeInput : MonoBehaviour
 
                 break;
             case 1:
-                transform.position = curPos + Vector3.forward * 10;
+                transform.position = curPos + Vector3.right * 10;
 
 
                 if (!isCheckingStopToRun)
@@ -105,7 +105,7 @@ public class FakeInput : MonoBehaviour
                 {
                     title = $"StopToRun_{StopToRunCount}";
                     sw = new StreamWriter(title + ".txt", true);
-                    var dis = curPos.z - lastCharPos.z;
+                    var dis = curPos.x - lastCharPos.x;
 
                     sw.Write(dis + "\t\t");
                     sw.Close();
