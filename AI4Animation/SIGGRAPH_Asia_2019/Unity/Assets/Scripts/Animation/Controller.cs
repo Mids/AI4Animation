@@ -29,33 +29,36 @@ public class Controller {
 	private Vector3 Offset;
 
 	public void Update() {
-		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		// if(ActiveInteraction == null) {
-			RaycastHit[] hits = Physics.RaycastAll(ray, float.PositiveInfinity, LayerMask.GetMask("Default", "Ground", "Interaction"));
-			ProjectionValid = false;
-			float dMin = float.MaxValue;
-			for(int i=0; i<hits.Length; i++) {
-				float dNew = Vector3.Distance(ray.origin, hits[i].point);
-				if(dNew < dMin) {
-					dMin = dNew;
-					Projection = hits[i];
-					ProjectionValid = true;
-				}
-				// if(hits[i].transform == ActiveInteraction.transform || hits[i].transform.parent == ActiveInteraction.transform || hits[i].collider.isTrigger) {
-				// } else {
-				// 	float dNew = Vector3.Distance(ray.origin, hits[i].point);
-				// 	if(dNew < dMin) {
-				// 		dMin = dNew;
-				// 		Projection = hits[i];
-				// 		ProjectionValid = true;
-				// 	}
-				// }
-			}
-		// } else {
-			// ProjectionValid = Physics.Raycast(ray, out Projection, float.PositiveInfinity, LayerMask.GetMask("Default", "Ground", "Interaction"));
-		// }
+		// Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		// // if(ActiveInteraction == null) {
+		// 	RaycastHit[] hits = Physics.RaycastAll(ray, float.PositiveInfinity, LayerMask.GetMask("Default", "Ground", "Interaction"));
+		// 	ProjectionValid = false;
+		// 	float dMin = float.MaxValue;
+		// 	for(int i=0; i<hits.Length; i++) {
+		// 		float dNew = Vector3.Distance(ray.origin, hits[i].point);
+		// 		if(dNew < dMin) {
+		// 			dMin = dNew;
+		// 			Projection = hits[i];
+		// 			ProjectionValid = true;
+		// 		}
+		// 		// if(hits[i].transform == ActiveInteraction.transform || hits[i].transform.parent == ActiveInteraction.transform || hits[i].collider.isTrigger) {
+		// 		// } else {
+		// 		// 	float dNew = Vector3.Distance(ray.origin, hits[i].point);
+		// 		// 	if(dNew < dMin) {
+		// 		// 		dMin = dNew;
+		// 		// 		Projection = hits[i];
+		// 		// 		ProjectionValid = true;
+		// 		// 	}
+		// 		// }
+		// 	}
+		// // } else {
+		// 	// ProjectionValid = Physics.Raycast(ray, out Projection, float.PositiveInfinity, LayerMask.GetMask("Default", "Ground", "Interaction"));
+		// // }
+		//  
 		ProjectionActive = Input.GetMouseButton(1);
-		ProjectionInteraction = !ProjectionValid ? null : Projection.transform.GetComponent<Interaction>();
+		// ProjectionInteraction = !ProjectionValid ? null : Projection.transform.GetComponent<Interaction>();
+		ProjectionInteraction = GameObject.Find("Chair").GetComponent<Interaction>();
+		
 		if(Input.GetMouseButtonDown(0) && ProjectionInteraction != null && SelectedInteraction == null) {
 			SelectedInteraction = ProjectionInteraction;
 			float screenDistance = Camera.main.WorldToScreenPoint(SelectedInteraction.transform.position).z;

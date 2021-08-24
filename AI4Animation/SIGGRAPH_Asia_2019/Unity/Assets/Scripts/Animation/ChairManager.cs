@@ -2,92 +2,108 @@ using UnityEngine;
 
 public class ChairManager : MonoBehaviour
 {
-	public GameObject ChairPrefab;
+    public GameObject ChairPrefab;
 
-	private GameObject ChairInstance;
+    private GameObject ChairInstance;
 
-	private readonly Vector3 Center = new Vector3(0, 0, -5);
+    private readonly Vector3 Center = new Vector3(0, 0, -5);
 
-	private readonly float Distance = 2.5f;
+    [SerializeField]
+    [Range(2, 3)]
+    private float Distance = 2.0f;
 
-	public static int curDirection = 0;
-	public static int curRotation = 0;
+    [SerializeField]
+    [Range(0, 3)]
+    private int curDirection = 0;
 
-	// Start is called before the first frame update
-	private void Start()
-	{
-		CreateChair();
-	}
+    [SerializeField]
+    [Range(0, 3)]
+    private int curRotation = 0;
 
-	// Update is called once per frame
-	private void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.Y))
-		{
-			if (ChairInstance != default)
-			{
-				Destroy(ChairInstance);
-				ChairInstance = default;
-			}
+    public static ChairManager Instance;
 
-			if (++curDirection > 3) curDirection = 0;
-			CreateChair();
-		}
-		else if (Input.GetKeyDown(KeyCode.U))
-		{
-			if (ChairInstance != default)
-			{
-				Destroy(ChairInstance);
-				ChairInstance = default;
-			}
+    public int CurRotation
+    {
+        get => curRotation;
+        set => curRotation = value % 4;
+    }
 
-			if (++curRotation > 3) curRotation = 0;
-			CreateChair();
-		}
-	}
 
-	private void CreateChair()
-	{
-		ChairInstance = Instantiate(ChairPrefab, GetPosition(), GetRotation(), transform);
-		ChairInstance.name = "Chair";
-	}
+    public int CurDirection
+    {
+        get => curDirection;
+        set => curDirection = value % 4;
+    }
 
-	private Vector3 GetPosition()
-	{
-		return Center + GetDirection() * Distance;
-	}
+    private void Awake()
+    {
+        Instance = this;
+    }
 
-	private Vector3 GetDirection()
-	{
-		switch (curDirection)
-		{
-			case 0:
-				return Vector3.forward;
-			case 1:
-				return Vector3.left;
-			case 2:
-				return Vector3.back;
-			case 3:
-				return Vector3.right;
-		}
+    // Start is called before the first frame update
+    private void Start()
+    {
+        ChairInstance = Instantiate(ChairPrefab, GetPosition(), GetRotation(), transform);
+        ChairInstance.name = "Chair";
+    }
 
-		return Vector3.zero;
-	}
+    // Update is called once per frame
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            ++CurDirection;
+            CreateChair();
+        }
 
-	private Quaternion GetRotation()
-	{
-		switch (curRotation)
-		{
-			case 0:
-				return Quaternion.identity;
-			case 1:
-				return Quaternion.Euler(0, 90, 0);
-			case 2:
-				return Quaternion.Euler(0, 180, 0);
-			case 3:
-				return Quaternion.Euler(0, 270, 0);
-		}
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            ++CurRotation;
+            CreateChair();
+        }
+    }
 
-		return Quaternion.identity;
-	}
+    public void CreateChair()
+    {
+        ChairInstance.transform.SetPositionAndRotation(GetPosition(), GetRotation());
+    }
+
+    private Vector3 GetPosition()
+    {
+        return Center + GetDirection() * Distance;
+    }
+
+    private Vector3 GetDirection()
+    {
+        switch (CurDirection)
+        {
+            case 0:
+                return Vector3.forward;
+            case 1:
+                return Vector3.right;
+            case 2:
+                return Vector3.back;
+            case 3:
+                return Vector3.left;
+        }
+
+        return Vector3.zero;
+    }
+
+    private Quaternion GetRotation()
+    {
+        switch (CurRotation)
+        {
+            case 0:
+                return Quaternion.identity;
+            case 1:
+                return Quaternion.Euler(0, 90, 0);
+            case 2:
+                return Quaternion.Euler(0, 180, 0);
+            case 3:
+                return Quaternion.Euler(0, 270, 0);
+        }
+
+        return Quaternion.identity;
+    }
 }

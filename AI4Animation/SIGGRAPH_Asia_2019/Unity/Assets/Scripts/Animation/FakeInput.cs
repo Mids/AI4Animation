@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class FakeInput : MonoBehaviour
 {
-    private static readonly KeyCode[] FakeKeys = {KeyCode.W, KeyCode.Q, KeyCode.E, KeyCode.LeftShift};
+    private static readonly KeyCode[] FakeKeys = {KeyCode.C}; //KeyCode.W, KeyCode.Q, KeyCode.E, KeyCode.LeftShift};
     // private static readonly KeyCode[] FakeKeys = {};
 
     private static readonly Vector3[] CheckPoints =
@@ -14,7 +14,7 @@ public class FakeInput : MonoBehaviour
     private int CurrentCheckPoint = 0;
 
     [SerializeField]
-    private Transform CharacterTransform;
+    private Transform characterTransform;
 
     public static FakeInput Instance;
 
@@ -22,13 +22,15 @@ public class FakeInput : MonoBehaviour
 
     public static float DistanceThreshold = 0.5f;
 
-    private static bool isChanging = false;
+    private static bool IsChanging = false;
 
-    public float TargetDelayTime = 5f;
+    public float targetDelayTime = 5f;
 
     private Material Mat;
 
-    public float cumulativeTime = 0f;
+    private ChairManager chairManager;
+
+    public static float randomTime = 0f;
 
     public Transform leftFoot;
     public Transform rightFoot;
@@ -43,9 +45,12 @@ public class FakeInput : MonoBehaviour
     private void Start()
     {
         Instance = this;
-        CharacterTransform = GameObject.Find("Anubis").transform;
+        characterTransform = GameObject.Find("Anubis").transform;
         Mat = GetComponent<MeshRenderer>().material;
+        chairManager = GameObject.Find("ChairManager").GetComponent<ChairManager>();
         // transform.position = GetRandomCheckPoint();
+
+        randomTime = Random.Range(0f, 1f);
     }
 
     private void Update()
@@ -53,86 +58,10 @@ public class FakeInput : MonoBehaviour
         // if (Vector3.Distance(CharacterTransform.position, transform.position) < DistanceThreshold && !isChanging)
         //     StartCoroutine(DelayedChange());
 
-        cumulativeTime += Time.deltaTime;
-        var curPos = Instance.CharacterTransform.position;
+        randomTime -= Time.deltaTime;
+        var curPos = Instance.characterTransform.position;
         string title;
         StreamWriter sw;
-
-        switch ((int) (cumulativeTime / 8f) % 4)
-        {
-            case 0:
-                transform.position = curPos;
-
-                if (isCheckingStopToRun)
-                {
-                    isCheckingStopToRun = false;
-                    isCheckingRunToStop = true;
-                }
-                
-                break;
-            case 1:
-                transform.position = curPos + Vector3.back * 10;
-
-
-                if (!isCheckingStopToRun)
-                {
-                    isCheckingStopToRun = true;
-                    isCheckingRunToStop = false;
-                    ++StopToRunCount;
-                    title = $"StopToRun_{StopToRunCount}";
-                    new StreamWriter(title + ".txt").Close();
-                    StartCoroutine(FootSlidingMeasure.Measure(leftFoot, "lfs_" + title));
-                    StartCoroutine(FootSlidingMeasure.Measure(rightFoot, "rfs_" + title));
-                }
-
-
-                if (isCheckingStopToRun)
-                {
-                    title = $"StopToRun_{StopToRunCount}";
-                    sw = new StreamWriter(title + ".txt", true);
-                    var dis = curPos.z - lastCharPos.z;
-
-                    sw.Write(-dis + "\t\t");
-                    sw.Close();
-                }
-
-                break;
-            case 2:
-                transform.position = curPos;
-
-                if (isCheckingStopToRun)
-                {
-                    isCheckingStopToRun = false;
-                    isCheckingRunToStop = true;
-                }
-                break;
-            case 3:
-                transform.position = curPos + Vector3.forward * 10;
-
-                if (!isCheckingStopToRun)
-                {
-                    isCheckingStopToRun = true;
-                    isCheckingRunToStop = false;
-                    ++StopToRunCount;
-                    title = $"StopToRun_{StopToRunCount}";
-                    new StreamWriter(title + ".txt").Close();
-                    StartCoroutine(FootSlidingMeasure.Measure(leftFoot, "lfs_" + title));
-                    StartCoroutine(FootSlidingMeasure.Measure(rightFoot, "rfs_" + title));
-                }
-
-
-                if (isCheckingStopToRun)
-                {
-                    title = $"StopToRun_{StopToRunCount}";
-                    sw = new StreamWriter(title + ".txt", true);
-                    var dis = curPos.z - lastCharPos.z;
-
-                    sw.Write(dis + "\t\t");
-                    sw.Close();
-                }
-
-                break;
-        }
 
         lastCharPos = curPos;
     }
@@ -146,19 +75,19 @@ public class FakeInput : MonoBehaviour
 
     private IEnumerator DelayedChange()
     {
-        isChanging = true;
+        IsChanging = true;
         var t = 0f;
-        while (t < TargetDelayTime)
+        while (t < targetDelayTime)
         {
             t += Time.deltaTime;
-            var gb = 1 - t / TargetDelayTime;
+            var gb = 1 - t / targetDelayTime;
 
             Mat.color = new Color(1, gb, gb);
 
             yield return null;
         }
 
-        isChanging = false;
+        IsChanging = false;
 
         ChangeToNextCheckPoint();
         Mat.color = Color.white;
@@ -180,7 +109,7 @@ public class FakeInput : MonoBehaviour
 
     public static bool ControlFakeKey(KeyCode key)
     {
-        if (Vector3.Distance(Instance.CharacterTransform.position, Instance.transform.position) <
+        if (Vector3.Distance(Instance.characterTransform.position, Instance.transform.position) <
             DistanceThreshold) return false;
 
         switch (key)
@@ -188,6 +117,9 @@ public class FakeInput : MonoBehaviour
             case KeyCode.LeftShift:
             case KeyCode.W:
             case KeyCode.S:
+            case KeyCode.C:
+                if (randomTime > 0)
+                    return false;
                 return true;
 
             case KeyCode.Q:
@@ -205,8 +137,8 @@ public class FakeInput : MonoBehaviour
 
     private static float GetAngle()
     {
-        var characterPosition = Instance.CharacterTransform.position;
-        var characterForward = Instance.CharacterTransform.forward;
+        var characterPosition = Instance.characterTransform.position;
+        var characterForward = Instance.characterTransform.forward;
         var targetPosition = Instance.transform.position;
         var dirVector = (targetPosition - characterPosition).normalized;
 

@@ -359,6 +359,8 @@ public class SIGGRAPH_Asia_2019 : NeuralAnimation {
 	}
 
 	private IEnumerator Sit() {
+		StartCoroutine(FootSlidingMeasure.Measure(GameObject.Find("LeftToe").transform, $"Left {ChairManager.Instance.CurDirection}, {ChairManager.Instance.CurRotation}"));
+		StartCoroutine(FootSlidingMeasure.Measure(GameObject.Find("RightToe").transform, $"Right {ChairManager.Instance.CurDirection}, {ChairManager.Instance.CurRotation}"));
 		Controller.Signal signal = Controller.GetSignal("Sit");
 		Interaction interaction = Controller.ProjectionInteraction != null ? Controller.ProjectionInteraction : Controller.GetClosestInteraction(transform);
 
@@ -371,6 +373,12 @@ public class SIGGRAPH_Asia_2019 : NeuralAnimation {
 				ApplyStaticGoal(interaction.GetContact("Hips").GetPosition(), interaction.GetContact("Hips").GetForward(), Signals);
 				Geometry.Setup(Geometry.Resolution);
 				Geometry.Sense(interaction.GetCenter(), LayerMask.GetMask("Interaction"), interaction.GetExtents(), InteractionSmoothing);
+
+
+				if (StyleSeries.Values[TimeSeries.Pivot][5] > 0.99)
+				{
+					FootSlidingMeasure.IsReading = false;
+				}
 				yield return new WaitForSeconds(0f);
 			}
 			while(StyleSeries.GetStyle(TimeSeries.Pivot, "Sit") > threshold) {
