@@ -359,8 +359,7 @@ public class SIGGRAPH_Asia_2019 : NeuralAnimation {
 	}
 
 	private IEnumerator Sit() {
-		StartCoroutine(FootSlidingMeasure.Measure(GameObject.Find("LeftToe").transform, $"Left {ChairManager.Instance.CurDirection}, {ChairManager.Instance.CurRotation}"));
-		StartCoroutine(FootSlidingMeasure.Measure(GameObject.Find("RightToe").transform, $"Right {ChairManager.Instance.CurDirection}, {ChairManager.Instance.CurRotation}"));
+		StartCoroutine(FootSlidingMeasure.Measure(GameObject.Find("LeftToe").transform, GameObject.Find("RightToe").transform, $"Foot {ChairManager.Instance.CurDirection}, {ChairManager.Instance.CurRotation}"));
 		Controller.Signal signal = Controller.GetSignal("Sit");
 		Interaction interaction = Controller.ProjectionInteraction != null ? Controller.ProjectionInteraction : Controller.GetClosestInteraction(transform);
 

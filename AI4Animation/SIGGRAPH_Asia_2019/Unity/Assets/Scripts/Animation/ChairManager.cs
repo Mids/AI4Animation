@@ -92,16 +92,17 @@ public class ChairManager : MonoBehaviour
 
     private Quaternion GetRotation()
     {
+        var randOffset = Random.Range(-0.1f, 0.1f);
         switch (CurRotation)
         {
             case 0:
-                return Quaternion.identity;
+                return Quaternion.Euler(0, randOffset, 0);
             case 1:
-                return Quaternion.Euler(0, 90, 0);
+                return Quaternion.Euler(0, 90 + randOffset, 0);
             case 2:
-                return Quaternion.Euler(0, 180, 0);
+                return Quaternion.Euler(0, 180 + randOffset, 0);
             case 3:
-                return Quaternion.Euler(0, 270, 0);
+                return Quaternion.Euler(0, 270 + randOffset, 0);
         }
 
         return Quaternion.identity;
