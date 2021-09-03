@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class FakeInput : MonoBehaviour
 {
-    private static readonly KeyCode[] FakeKeys = {KeyCode.C}; //KeyCode.W, KeyCode.Q, KeyCode.E, KeyCode.LeftShift};
+    private static readonly KeyCode[] FakeKeys = {KeyCode.W, KeyCode.Q, KeyCode.E, KeyCode.LeftShift};
     // private static readonly KeyCode[] FakeKeys = {};
 
     private static readonly Vector3[] CheckPoints =
@@ -20,17 +20,17 @@ public class FakeInput : MonoBehaviour
 
     public static float AngleThreshold = 10f;
 
-    public static float DistanceThreshold = 0.5f;
+    public static float DistanceThreshold = 1f;
 
     private static bool IsChanging = false;
 
-    public float targetDelayTime = 5f;
+    public float targetDelayTime = 105f;
 
     private Material Mat;
 
     private ChairManager chairManager;
 
-    public static float randomTime = 0f;
+    // public static float randomTime = 0f;
 
     public Transform leftFoot;
     public Transform rightFoot;
@@ -50,15 +50,15 @@ public class FakeInput : MonoBehaviour
         chairManager = GameObject.Find("ChairManager").GetComponent<ChairManager>();
         // transform.position = GetRandomCheckPoint();
 
-        randomTime = Random.Range(0f, 1f);
+        // randomTime = Random.Range(0f, 1f);
     }
 
     private void Update()
     {
-        // if (Vector3.Distance(CharacterTransform.position, transform.position) < DistanceThreshold && !isChanging)
-        //     StartCoroutine(DelayedChange());
+        if (Vector3.Distance(characterTransform.position, transform.position) < DistanceThreshold && !IsChanging)
+            StartCoroutine(DelayedChange());
 
-        randomTime -= Time.deltaTime;
+        // randomTime -= Time.deltaTime;
         var curPos = Instance.characterTransform.position;
         string title;
         StreamWriter sw;
@@ -77,15 +77,26 @@ public class FakeInput : MonoBehaviour
     {
         IsChanging = true;
         var t = 0f;
+        var sw = new StreamWriter("1mTest" + ".txt", true);
+        
         while (t < targetDelayTime)
         {
             t += Time.deltaTime;
             var gb = 1 - t / targetDelayTime;
 
             Mat.color = new Color(1, gb, gb);
+            
+            var s = $"{Vector3.Distance(characterTransform.position, transform.position)}\t";
+            sw.Write(s);
+            Debug.Log(s);
+
 
             yield return null;
         }
+        
+        sw.Write('\n');
+        
+        sw.Close();
 
         IsChanging = false;
 
@@ -118,8 +129,8 @@ public class FakeInput : MonoBehaviour
             case KeyCode.W:
             case KeyCode.S:
             case KeyCode.C:
-                if (randomTime > 0)
-                    return false;
+                // if (randomTime > 0)
+                    // return false;
                 return true;
 
             case KeyCode.Q:

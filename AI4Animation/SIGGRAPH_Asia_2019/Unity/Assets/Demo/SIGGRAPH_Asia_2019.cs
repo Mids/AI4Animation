@@ -332,8 +332,8 @@ public class SIGGRAPH_Asia_2019 : NeuralAnimation {
 	}
 
 	private void Default() {
-		// if(true) {
-		if(Controller.ProjectionActive) {
+		if(true) {
+		// if(Controller.ProjectionActive) {
 		// ApplyStaticGoal(Controller.Projection.point, Vector3.ProjectOnPlane(Controller.Projection.point-transform.position, Vector3.up).normalized, Signals);
 		var targetPosition = FakeInput.Instance.transform.position;
 		ApplyStaticGoal(targetPosition, Vector3.ProjectOnPlane(targetPosition-transform.position, Vector3.up).normalized, Signals);
@@ -359,7 +359,7 @@ public class SIGGRAPH_Asia_2019 : NeuralAnimation {
 	}
 
 	private IEnumerator Sit() {
-		StartCoroutine(FootSlidingMeasure.Measure(GameObject.Find("LeftToe").transform, GameObject.Find("RightToe").transform, $"Foot {ChairManager.Instance.CurDirection}, {ChairManager.Instance.CurRotation}"));
+		// StartCoroutine(FootSlidingMeasure.Measure(GameObject.Find("LeftToe").transform, GameObject.Find("RightToe").transform, $"Foot {ChairManager.Instance.CurDirection}, {ChairManager.Instance.CurRotation}"));
 		Controller.Signal signal = Controller.GetSignal("Sit");
 		Interaction interaction = Controller.ProjectionInteraction != null ? Controller.ProjectionInteraction : Controller.GetClosestInteraction(transform);
 
@@ -374,10 +374,10 @@ public class SIGGRAPH_Asia_2019 : NeuralAnimation {
 				Geometry.Sense(interaction.GetCenter(), LayerMask.GetMask("Interaction"), interaction.GetExtents(), InteractionSmoothing);
 
 
-				if (StyleSeries.Values[TimeSeries.Pivot][5] > 0.99)
-				{
-					FootSlidingMeasure.IsReading = false;
-				}
+				// if (StyleSeries.Values[TimeSeries.Pivot][5] > 0.99)
+				// {
+				// 	FootSlidingMeasure.IsReading = false;
+				// }
 				yield return new WaitForSeconds(0f);
 			}
 			while(StyleSeries.GetStyle(TimeSeries.Pivot, "Sit") > threshold) {
